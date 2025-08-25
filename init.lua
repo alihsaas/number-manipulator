@@ -1,5 +1,6 @@
 local DEFAULT_SUFFIX = {"K", "M", "B", "T"}
 local DEFAULT_DECIMAL_PLACE = 0
+local DEFAULT_REMOVE_TRAILING = false
 
 local NumAbbr = newproxy(true);
 local metatable = getmetatable(NumAbbr)
@@ -20,15 +21,27 @@ end
 function methods:abbreviate(value)
 	validateInput(value)
 
-	if math.abs(value) < 1e3 then
-		return string.format('%.'..self.decimalPlace..'f', value)
-	end
+    if math.abs(value) < 1e3 then
+        local num = string.format('%.' .. self.decimalPlace .. 'f', value)
+        if self.removeTrailing then
+            num = num:gsub('(%..-)0+$', '%1'):gsub('%.+$', '')
+        end
+        return num
+    end
 
-	local integralPart = tostring(value):match("%d+")
-	local index = math.min(math.floor(#integralPart / 3.25), #self.suffix)
-	local suffixValue = 10 ^ (index * 3)
-	print(suffixValue)
-	return string.format('%.'..self.decimalPlace..'f' .. self.suffix[index], value / suffixValue)
+    local integralPart = tostring(value):match("%d+")
+    local index = math.min(math.floor(#integralPart / 3.25), #self.suffix)
+
+    index = math.max(1, index)
+
+    local suffixValue = 10 ^ (index * 3)
+
+    local num = string.format('%.' .. self.decimalPlace .. 'f', value / suffixValue)
+    if self.removeTrailing then
+        num = num:gsub('(%..-)0+$', '%1'):gsub('%.+$', '')
+    end
+
+    return num .. (self.suffix[index] or '')
 end
 
 function methods:deabbreviate(value)
@@ -47,14 +60,30 @@ function methods:deabbreviate(value)
 	return value * mul
 end
 
+function methods:setDecimalPlace(value)
+	self.decimalPlace = value
+	return self
+end
+
+function methods:setSuffix(value)
+	self.suffix = value
+	return self
+end
+
+function methods:setRemoveTrailing(value)
+	self.removeTrailing = value
+	return self
+end
+
 function methods:__tostring()
 	return "NumAbbr(".. table.concat( self.suffix, "," ) ..")"
 end
 
-function metatable.new(decimalPlace, suffix)
+function metatable.new()
 	local self = {}
-	self.suffix = suffix or DEFAULT_SUFFIX
-	self.decimalPlace = decimalPlace or DEFAULT_DECIMAL_PLACE
+	self.suffix = DEFAULT_SUFFIX
+	self.decimalPlace = DEFAULT_DECIMAL_PLACE
+	self.removeTrailing = DEFAULT_REMOVE_TRAILING
 	return setmetatable(self, methods)
 end
 

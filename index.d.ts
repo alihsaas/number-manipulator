@@ -4,7 +4,11 @@ export class NumAbbr {
 	 * @param decimalPlace The number of digits in decimal part of the outputed number
 	 * @param suffix A table of suffixes that will be added to the end of the outputed number according to their place in the table.
 	 */
-	constructor(decimalPlace?: number, suffix?: string[])
+	constructor()
+
+	setDecimalPlace(value: number): NumAbbr;
+	setSuffix(value: string[]): NumAbbr;
+	setRemoveTrailing(value: boolean): NumAbbr;
 
 	/**
 	 * Converts the inputed number to a abbreviated string
