@@ -4,8 +4,7 @@ export class NumAbbr {
 	 * @param decimalPlace The number of digits in decimal part of the outputed number
 	 * @param suffix A table of suffixes that will be added to the end of the outputed number according to their place in the table.
 	 */
-	decimalPlace?: number;
-	suffix?: string[];
+	constructor(decimalPlace?: number, suffix?: string[])
 
 	/**
 	 * Converts the inputed number to a abbreviated string
@@ -24,7 +23,7 @@ export class NumAbbr {
  * Converts the inputed number to a comma sperated number
  * @param value The number to comma seperate
  */
-export const formatNum: (value: number) => string;
+export declare const formatNum: (value: number) => string;
 
 /**
  * Coverts the inputed number in Bytes to KB, GB...etc
@@ -36,4 +35,4 @@ export const formatNum: (value: number) => string;
  * @param value The number to be abbreviated
  * @param decimalPlace The number of digits in decimal part of the outputed number
  */
-export const abbreviateBytes: (value: number, decimalPlace?: number) => string;
+export declare const abbreviateBytes: (value: number, decimalPlace?: number) => string;
